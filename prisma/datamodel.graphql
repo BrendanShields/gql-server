@@ -1,0 +1,43 @@
+type User {
+  id: ID! @unique
+  firstName: String!
+  surname: String!
+  email: String! @unique
+  password: String!
+  posts: [Post!]! @relation(name: "PostToUser", onDelete: CASCADE)
+  events: [Event!]! @relation(name: "EventToUser", onDelete: CASCADE)
+  comments: [Comment!]! @relation(name: "CommentToUser", onDelete: CASCADE)
+  bookings: [Booking!]! @relation(name: "BookingToUser", onDelete: CASCADE)
+}
+
+type Event {
+  id: ID! @unique
+  title: String!
+  body: String!
+  location: String!
+  date: String!
+  author: User! @relation(name: "EventToUser", onDelete: SET_NULL)
+  bookings: [Booking!]! @relation(name: "BookingToEvent", onDelete: CASCADE)
+}
+
+type Booking {
+  id: ID! @unique
+  user: User! @relation(name: "BookingToUser", onDelete: SET_NULL)
+  event: Event! @relation(name: "BookingToEvent", onDelete: SET_NULL)
+}
+
+type Post {
+  id: ID! @unique
+  title: String!
+  body: String!
+  published: Boolean!
+  author: User! @relation(name: "PostToUser", onDelete: SET_NULL)
+  comments: [Comment!]! @relation(name: "CommentToPost", onDelete: CASCADE)
+}
+
+type Comment {
+  id: ID! @unique
+  text: String!
+  author: User! @relation(name: "CommentToUser", onDelete: SET_NULL)
+  post: Post! @relation(name: "CommentToPost", onDelete: CASCADE)
+}

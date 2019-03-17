@@ -1,0 +1,160 @@
+type Query {
+    users(query: String, first: Int, skip: Int): [User!]!
+    comments(query: String, first: Int, skip: Int): [Comment!]!
+    events(query: String, first: Int, skip: Int): [Event!]!
+    me: User! 
+    posts(query: String, first: Int, skip: Int): [Post!]!
+    myposts(query: String): [Post!]!
+    post(id: ID!): Post!
+    bookings:[Booking!]!
+}
+
+type Mutation {
+    createUser(data: CreateUserInput!): AuthPayload!
+    login(data: LoginUserInput!): AuthPayload!
+    deleteUser: User!
+    updateUser(data: UpdateUserInput!): User!
+    createPost(data: CreatePostInput!): Post!
+    deletePost(id: ID!): Post!
+    updatePost(id: ID!, data: UpdatePostInput!): Post!
+    createComment(data: CreateCommentInput!): Comment!
+    deleteComment(id: ID!): Comment!
+    updateComment(id: ID!, data: UpdateCommentInput!): Comment!
+    createBooking(data: CreateBookingInput!): Booking!
+    deleteBooking(id: ID!): Booking!
+    createEvent(data: CreateEventInput!): Event!
+    updateEvent(id: ID!, data: UpdateEventInput!): Event!
+    deleteEvent(id: ID!): Event!
+}
+
+type Subscription {
+    comment(postId: ID!): CommentSubscriptionPayload!
+    post: PostSubscriptionPayload!
+    event: EventSubscriptionPayload!
+}
+
+type AuthPayload {
+    user: User!
+    token: String!
+}
+
+input CreateEventInput {
+    title: String!
+    body: String!
+    location: String!
+    date: String!
+}
+
+input UpdateEventInput {
+    title: String!
+    body: String!
+    location: String!
+    date: String!
+}
+
+input CreateBookingInput {
+    event: ID!
+}
+
+input CreateUserInput {
+    firstName: String!,
+    surname: String!,
+    email: String!,
+    password: String!
+}
+
+input LoginUserInput {
+    email: String!
+    password: String!
+}
+
+input UpdateUserInput {
+    firstName: String!
+    surname: String!
+    email: String!
+    password: String
+}
+
+input CreateCommentInput {
+    text: String!,
+    post: ID!
+}
+
+input UpdateCommentInput {
+    text: String!
+}
+
+input CreatePostInput {
+    title: String!,
+    body: String!,
+    published: Boolean!
+}
+
+input UpdatePostInput {
+    title: String!,
+    body: String!,
+}
+
+type User {
+    id: ID!
+    firstName: String!
+    surname: String!
+    email: String
+    password: String!
+    posts: [Post!]!
+    comments: [Comment!]!
+    bookings: [Booking!]!
+}
+
+type Booking {
+    id: ID!
+    user: User!
+    event: Event!
+}
+
+type Event {
+  id: ID!
+  title: String!
+  body: String!
+  location: String!
+  date: String!
+  author: User!
+  bookings: [Booking!]!
+}
+
+type Comment {
+    id: String!
+    text: String!
+    author: User!
+    post: Post!
+}
+
+type Post {
+    id: ID!
+    title: String!
+    body: String!
+    author: User!
+    published: Boolean!
+    comment: [Comment!]!
+}
+
+enum MutationType {
+    CREATED
+    UPDATED
+    DELETED
+}
+
+type EventSubscriptionPayload {
+    mutation: MutationType!,
+    node: Event
+}
+
+type PostSubscriptionPayload {
+    mutation: MutationType!
+    node: Post
+}
+
+type CommentSubscriptionPayload {
+    mutation: MutationType!
+    node: Comment
+}
